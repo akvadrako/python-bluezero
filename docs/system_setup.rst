@@ -28,28 +28,25 @@ Using Bluezero for a Peripheral role or beacon
 ----------------------------------------------
 
 The BlueZ DBus API functionality associated with Bluetooth advertising
-requires the Bluetooth daemon to be run with the experimental flag.
+requires the Bluetooth daemon to be run with the `-E`/`--experimental` flag.
 Advertising is used for Beacons and Peripheral role.
-Experimental mode can be switched on by default in the bluetooth.service file
 
-Edit bluetooth.service file to add --experimental flag e.g::
+To enable the experimental mode::
 
-    sudo sed -i '/^ExecStart.*bluetoothd\s*$/ s/$/ --experimental/' /lib/systemd/system/bluetooth.service
+    sudo tee /etc/systemd/system/bluetooth.service.d/override.conf <<EOF
+    [Service]
+    ExecStart=
+    ExecStart=/usr/lib/bluetooth/bluetoothd -E
+    EOF
 
-
-Restart bluetoothd in experimental mode
-=======================================
-
-You will need to either, reboot or run::
+Now restart the daemon::
 
     sudo systemctl daemon-reload
-    sudo service bluetooth restart
-
-The bluetoothd should now be set to run with the experimental flag by default.
+    sudo systemctl restart bluetooth
 
 To check the bluetoothd is running with the experimental flag::
 
-    service bluetooth status
+    sudo systemctl status bluetooth
 
 
 Change DBus permissions for Bluezero
